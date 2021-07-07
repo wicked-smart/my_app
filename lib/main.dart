@@ -13,11 +13,20 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('OTP Validation!'),
       ),
-      body: Container(
-        child: Center(child: Text('Hi, Flutter!')),
+      body: Column(
+        children: [
+          Image.asset(
+            "assets/images/hey-logo.png",
+            fit: BoxFit.cover,
+          ),
+          SizedBox(
+            height: 20.0,
+          )
+        ],
       ),
     );
   }
