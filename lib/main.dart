@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:email_auth/email_auth.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -10,7 +12,53 @@ void main() {
   ));
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
+
+  ///Initialise the state
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  /// function to Send OTP
+  void sendOTP() async {
+    EmailAuth.sessionName = "Test Session";
+    var res = await EmailAuth.sendOtp(
+      receiverMail: _emailController.text,
+    );
+
+    if (res) {
+      showwwdialog();
+    } else {
+      print("Error Sending OTP!");
+    }
+  }
+
+  /// Validate the recieved OTP
+
+  void validateOTP() async {
+    var res = EmailAuth.validate(
+        receiverMail: _emailController.text, userOTP: _otpController.text);
+    if (res) {
+      print("OTP verified!");
+      _otpController.clear();
+    } else
+      print("Incorrect OTP!");
+  }
+
+  @override
+  void dispose() {
+    _otpController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +83,7 @@ class HomePage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                   //border: OutlineInputBorder(),
@@ -42,13 +91,14 @@ class HomePage extends StatelessWidget {
                   hintText: 'Enter your e-mail id',
                   suffixIcon: TextButton(
                     child: Text("Send OTP"),
-                    onPressed: () {},
+                    onPressed: () => sendOTP(),
                   )),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              controller: _otpController,
               decoration: InputDecoration(
                 //border: OutlineInputBorder(),
                 hintText: 'Your OTP',
@@ -58,10 +108,19 @@ class HomePage extends StatelessWidget {
           ),
           ElevatedButton(
               //style: sty,
-              onPressed: () {},
+              onPressed: () => validateOTP(),
               child: const Text('Verify OTP')),
         ],
       ),
+    );
+  }
+}
+
+Widget? showwwdialog() {
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoAlertDialog(
+      title: Text('OTP sent'),
     );
   }
 }
